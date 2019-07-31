@@ -3,6 +3,19 @@
 #include <hal/hal.h>
 #include <SPI.h>
 
+
+#ifdef __AVR_ATmega328P__
+#define RED 14
+#define GREEN 15
+#define BLUE 16
+#define CS 10
+#elif SAMD_SERIES
+#define RED 11
+#define GREEN 12
+#define BLUE 13
+#define CS 8
+#endif
+
 char incomingKey;
 char keyNo[3] = {'0', '0', '0'};
 byte  appeui[8];
@@ -36,7 +49,7 @@ const unsigned TX_INTERVAL = 60;
 
 // Pin mapping
 const lmic_pinmap lmic_pins = {
-  .nss = 10,
+  .nss = CS,
   .rxtx = LMIC_UNUSED_PIN,
   .rst = LMIC_UNUSED_PIN,
   .dio = {LMIC_UNUSED_PIN, LMIC_UNUSED_PIN, LMIC_UNUSED_PIN}, //2,4,na
@@ -59,12 +72,13 @@ void onEvent (ev_t ev) {
       Serial.println(F("EV_BEACON_TRACKED"));
       break;
     case EV_JOINING:
-
+      digitalWrite(GREEN, LOW);
+      digitalWrite(BLUE, HIGH);
       Serial.println(F("EV_JOINING"));
       break;
     case EV_JOINED:
-      digitalWrite(16, LOW);
-      digitalWrite(15, HIGH);
+      digitalWrite(BLUE, LOW);
+      digitalWrite(GREEN, HIGH);
       Serial.println(F("EV_JOINED"));
 
       // Disable link check validation (automatically enabled
@@ -91,9 +105,6 @@ void onEvent (ev_t ev) {
         Serial.println(LMIC.dataLen);
         Serial.println(F(" bytes of payload"));
       }
-      digitalWrite(14, HIGH);
-      delay(500);
-      digitalWrite(14, LOW);
       // Schedule next transmission
       os_setTimedCallback(&sendjob, os_getTime() + sec2osticks(TX_INTERVAL), do_send);
       break;
@@ -136,9 +147,9 @@ void setup() {
   Wire.begin(8);                // join i2c bus with address #8
   Wire.onReceive(receiveHandle); // register event
   Wire.onRequest(requestHandle);
-  pinMode(14, OUTPUT);
-  pinMode(15, OUTPUT);
-  pinMode(16, OUTPUT);
+  pinMode(RED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(BLUE, OUTPUT);
 
 
   // LMIC init
@@ -236,9 +247,7 @@ void receiveHandle(int howMany) {
   }
 
   while (Wire.available() > 1 && keysSet == true) {
-    Serial.println("while entered");
-    char s = Wire.read();
-    if (s == '0') {
+    if (Wire.read() == '0') {
       byteLen = Wire.available();
       Serial.print("DATA SIZE: "); Serial.println(byteLen);
       Serial.print("DATA: ");
