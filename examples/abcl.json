@@ -1,0 +1,65 @@
+{
+  "sense": [
+    {
+      "asset": "1",
+      "value": {
+        "byte": 0,
+        "bytelength": 2,
+        "type": "integer",
+        "calculation": "val/100"
+      }
+    },
+    {
+      "asset": "2",
+      "value": {
+        "byte": 2,
+        "bytelength": 2,
+        "type": "integer",
+        "calculation": "val/100"
+      }
+    },
+    {
+      "asset": "3",
+      "value": {
+        "byte": 4,
+        "bytelength": 2,
+        "type": "integer"
+      }
+    },
+    {
+      "asset": "6",
+      "value": {
+        "latitude": {
+          "byte": 6,
+          "bytelength": 4,
+          "type": "integer",
+          "calculation": "val/10000000"
+        },
+        "longitude": {
+          "byte": 10,
+          "bytelength": 4,
+          "type": "integer",
+          "calculation": "val/10000000"
+        }
+      }
+    },
+    {
+      "asset": "17",
+      "value": {
+        "byte": 14,
+        "bytelength": 2,
+        "type": "integer",
+        "calculation": "val/100"
+      }
+    },
+    {
+      "asset": "18",
+      "value": {
+        "byte": 16,
+        "bytelength": 2,
+        "type": "integer",
+        "calculation": "val/100"
+      }
+    }
+  ]
+}
